@@ -87,7 +87,7 @@ router.get("/discord", async (ctx) => {
         client_secret: CLIENT_SECRET,
         grant_type: "authorization_code",
         code,
-        redirect_uri: "http://localhost:8080/discord",
+        redirect_uri: REDIRECT_URI,
       }),
     }).then((res) => res.json());
 
