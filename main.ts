@@ -23,7 +23,11 @@ const REST = new RESTManager({
 });
 
 const client = new MongoClient();
-await client.connect(eval(Deno.env.get("MONGO")!));
+let mongoAuthString = Deno.env.get("MONGO")!;
+if (mongoAuthString.startsWith('"') && mongoAuthString.endsWith('"')) {
+  mongoAuthString = mongoAuthString.slice(1, -1);
+}
+await client.connect(mongoAuthString);
 console.log("Connected to MongoDB!");
 
 const db = client.database("modmail_bot");
