@@ -1,0 +1,152 @@
+@font-face {
+  font-family: "Metropolis Regular";
+  src: url("/font/Metropolis-Regular.otf");
+}
+
+@font-face {
+  font-family: "Metropolis Medium";
+  src: url("/font/Metropolis-Medium.otf");
+}
+
+@font-face {
+  font-family: "Metropolis SemiBold";
+  src: url("/font/Metropolis-SemiBold.otf");
+}
+
+:root {
+  --bg: #36393F;
+  --text: #FFFFFF;
+  --input-bg: #2F3136;
+  --alt-text: #B9BBBE;
+  --btn-hover: #3C45A5;
+  --btn: #5865F2;
+  --btn-disabled: #474F98;
+  --btn-disabled-hover: #393F72;
+  --input-border-hl: #5865F2;
+  --input-border: #040405;
+  --input-text: #f6f6f7;
+}
+
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Metropolis Regular", sans-serif;
+}
+
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#appeal {
+  align-items: unset;
+}
+
+.hidden {
+  display: none;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 5px;
+  background: var(--btn);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn:hover {
+  background: var(--btn-hover);
+}
+
+.btn-disabled {
+  background: var(--btn-disabled);
+  color: var(--text);
+  cursor: default;
+}
+
+.btn-disabled:hover {
+  background: var(--btn-disabled-hover);
+}
+
+.input {
+  border: solid 1px var(--input-border);
+  resize: none;
+  padding: 10px;
+  height: 120px;
+  background-color: var(--input-bg);
+  width: 100%;
+  border-radius: 3px;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  color: var(--input-text);
+  font-family: "Metropolis Regular", sans-serif;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.input:focus {
+  border: solid 1px var(--input-border-hl);
+}
+
+#appeal-form {
+  --pad: 20px;
+  width: calc(100% - calc(var(--pad) * 2));
+  padding: var(--pad);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+h2 {
+  font-family: "Metropolis SemiBold", sans-serif;
+}
+
+h4 {
+  font-family: "Metropolis Medium", sans-serif;
+}
+
+#avatar {
+  --size: 18px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+}
+
+a {
+  text-decoration: none;
+  color: var(--btn);
+  cursor: pointer;
+}
+
+.side-note {
+  color: var(--alt-text);
+}
+
+#profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#profile > * {
+  margin-right: 4px;
+}
+
+.question-error {
+  margin-bottom: 10px;
+  color: red;
+}
