@@ -12,6 +12,7 @@ logger = getLogger(__name__)
 
 
 class BanAppeal(commands.Cog):
+    """A Plugin to manage the ban appeals server."""
     def __init__(self, bot: Bot):
         self.bot = bot
         self.ban_appeals = bot.db.ban_appeals
