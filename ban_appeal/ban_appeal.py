@@ -13,6 +13,7 @@ logger = getLogger(__name__)
 
 class BanAppeal(commands.Cog):
     """A Plugin to manage the ban appeals server."""
+
     def __init__(self, bot: Bot):
         self.bot = bot
         self.ban_appeals = bot.db.ban_appeals
@@ -41,9 +42,7 @@ class BanAppeal(commands.Cog):
                 await self.handle_new_appeal(appeal, config)
 
     async def handle_new_appeal(self, appeal, config):
-        await self.ban_appeals.update_one(
-            {"_id": appeal["_id"]}, {"$set": {"status": "pending"}}
-        )
+        await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "pending"}})
         user = await self.bot.fetch_user(int(appeal["userID"]))
         logger.info(f"New appeal: from {user} - {user.id}")
         embed = discord.Embed(title="Ban Appeal", color=self.bot.main_color)
@@ -53,14 +52,17 @@ class BanAppeal(commands.Cog):
         for q in appeal["questions"]:
             embed.add_field(name=q["question"], value=q["answer"], inline=False)
         embed.set_footer(text=f"User ID: {user.id}")
-        overwrites = {
-            self.bot.modmail_guild.default_role: discord.PermissionOverwrite(
-                read_messages=False, send_messages=False
-            ),
-        }
+        # not let ourselves handle overwrites tbh cause like... 
+        # ummmm dpy automatically creates a channel and 
+        # syncs the default permissions from the set category
+        # so *lets* not do that
+        #         overwrites = {
+        #             self.bot.modmail_guild.default_role: discord.PermissionOverwrite(
+        #                 read_messages=False, send_messages=False
+        #             ),
+        #         }
         channel = await self.bot.modmail_guild.create_text_channel(
             name=f"appeal-{user.id}",
-            overwrites=overwrites,
             category=discord.Object(int(config["category"])),
         )
         await self.ban_appeals.update_one(
@@ -75,11 +77,11 @@ class BanAppeal(commands.Cog):
         appeal = await self.ban_appeals.find_one({"channel": str(message.channel.id)})
         if appeal is not None:
             if message.embeds and message.embeds[0].title == "Ban Appeal":
-                message.content = f"New ban appeal from {message.embeds[0].author.name} - {appeal['userID']}"
+                message.content = (
+                    f"New ban appeal from {message.embeds[0].author.name} - {appeal['userID']}"
+                )
                 for q in appeal["questions"]:
-                    message.content += (
-                        f"\n\n**Q:** {q['question']}\n> **A:** {q['answer']}"
-                    )
+                    message.content += f"\n\n**Q:** {q['question']}\n> **A:** {q['answer']}"
             await self.append_log(message)
 
     @commands.group(name="banappeal")
@@ -138,9 +140,7 @@ class BanAppeal(commands.Cog):
         """
 
         questions = list(questions)
-        await self.config.update_one(
-            {}, {"$set": {"questions": questions}}, upsert=True
-        )
+        await self.config.update_one({}, {"$set": {"questions": questions}}, upsert=True)
         await ctx.send("Successfully set questions list!")
 
     @config_questions_main.command(name="add")
@@ -151,9 +151,7 @@ class BanAppeal(commands.Cog):
 
         config = await self.get_config()
         config["questions"].append(question)
-        await self.config.update_one(
-            {}, {"$set": {"questions": config["questions"]}}, upsert=True
-        )
+        await self.config.update_one({}, {"$set": {"questions": config["questions"]}}, upsert=True)
         await ctx.send("Successfully added question!")
 
     @config_questions_main.command(name="remove")
@@ -167,13 +165,11 @@ class BanAppeal(commands.Cog):
             await ctx.send("Invalid question index!")
             return
         config["questions"].pop(question_index - 1)
-        await self.config.update_one(
-            {}, {"$set": {"questions": config["questions"]}}, upsert=True
-        )
+        await self.config.update_one({}, {"$set": {"questions": config["questions"]}}, upsert=True)
         await ctx.send("Successfully removed question!")
 
     @commands.command()
-    @checks.has_permissions(PermissionLevel.ADMINISTRATOR)
+    @checks.has_permissions(PermissionLevel.MODERATOR)
     async def accept(self, ctx: commands.Context):
         """
         Accept the ban appeal.
@@ -187,9 +183,7 @@ class BanAppeal(commands.Cog):
             await ctx.send("This appeal is already handled.")
             return
 
-        await self.ban_appeals.update_one(
-            {"_id": appeal["_id"]}, {"$set": {"status": "accepted"}}
-        )
+        await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "accepted"}})
 
         try:
             await ctx.guild.unban(discord.Object(int(appeal["userID"])))
@@ -199,7 +193,7 @@ class BanAppeal(commands.Cog):
         await self.close(ctx.author, ctx.channel, message="Accepted.")
 
     @commands.command()
-    @checks.has_permissions(PermissionLevel.ADMINISTRATOR)
+    @checks.has_permissions(PermissionLevel.MODERATOR)
     async def deny(self, ctx: commands.Context):
         """
         Deny the ban appeal.
@@ -213,9 +207,7 @@ class BanAppeal(commands.Cog):
             await ctx.send("This appeal is already handled.")
             return
 
-        await self.ban_appeals.update_one(
-            {"_id": appeal["_id"]}, {"$set": {"status": "rejected"}}
-        )
+        await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "rejected"}})
         await self.close(ctx.author, ctx.channel, message="Rejected.")
 
     async def create_log_entry(
@@ -336,9 +328,7 @@ class BanAppeal(commands.Cog):
 
         embed = discord.Embed(description=desc, color=self.bot.error_color)
         embed.title = f"{user} (`{user.id}`) Ban Appeal"
-        embed.set_footer(
-            text=f"Handled by {closer} ({closer.id})", icon_url=closer.avatar_url
-        )
+        embed.set_footer(text=f"Handled by {closer} ({closer.id})", icon_url=closer.avatar_url)
         embed.timestamp = datetime.utcnow()
 
         if self.bot.log_channel is not None:
