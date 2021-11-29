@@ -1,4 +1,5 @@
 .vscode/
 # has my env vars
 run.bat
+.env
 modmail/
