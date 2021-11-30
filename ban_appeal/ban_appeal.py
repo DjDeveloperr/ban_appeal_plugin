@@ -144,7 +144,7 @@ class BanAppeal(commands.Cog):
         await ctx.send("Successfully set questions list!")
 
     @config_questions_main.command(name="add")
-    async def config_questions_add(self, ctx: commands.Context, question: str):
+    async def config_questions_add(self, ctx: commands.Context, *, question: str):
         """
         Add a new ban appeal question to the existing list.
         """
