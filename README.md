@@ -57,7 +57,7 @@ You need to obtain few env variables for this.
 * `CLIENT_ID` - The client ID of your modmail bot, it can be obtained [here](https://discord.com/developers/applications) in the `OAuth2` section.
 * `CLIENT_SECRET` - The client secret of your modmail bot, it can also be obtained in the `OAuth2` section of your bot in [discord.dev](https://discord.com/developers/applications).
 * `TOKEN` - The token of your modmail bot, you can find it in the `Bot` section in [discord.dev](https://discord.com/developers/applications).
-* `REDIRECT_URI` - The domain/ip of your server where everyone can access your ban appeals server, if you use a domain you're on your own to setup a reverse proxy like nginx. Note you also have to add this in the `Redirects` section in the `OAuth2` menu of your bot in [discord.dev](https://discord.com/developers/applications), otherwise it won't work.
+* `REDIRECT_URI` - The domain/ip of your server where everyone can access your ban appeals server, if you use a domain you're on your own to setup a reverse proxy like nginx. Your domain/ip should also contain `/discord` with it like: `http://localhost:6969/discord`. Note you also have to add this in the `Redirects` section in the `OAuth2` menu of your bot in [discord.dev](https://discord.com/developers/applications), otherwise it won't work.
 
 ## License
 
