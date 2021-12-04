@@ -33,7 +33,7 @@ If you did everything correctly you should see `Listening to ...` in console whi
 `[p]` is your prefix.
 To get started with the plugin:
 
-* First add the plugin to your bot by running `[p]plugins add DjDeveloperr/ban_appeal_plugin/ban_appeal`.
+* First add the plugin to your bot by running `[p]plugins add DjDeveloperr/ban_appeal_plugin/ban_appeal@main`.
 * You can configure the ban appeals category where channels will be made for appeals by running `[p]banappeal category category_id`, don't provide `category_id` to see the currently set category.
 * You can add a question for appeals by doing `[p]banappeal questions add your question` or you can add in bulk by doing `[p]banappeal questions setlist "question1" "question2"` questions with spaces must be wrapped in quotes `""` like `"this"`.
 * To remove a question `[p]banappeal questions remove index-of-the-question`, you can find the list of questions and see their indexes by running `[p]banappeal questions list`
