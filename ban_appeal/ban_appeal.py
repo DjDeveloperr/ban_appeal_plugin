@@ -119,6 +119,27 @@ class BanAppeal(commands.Cog):
             return
 
         await self.config.update_one({}, {"$set": {"category": category}}, upsert=True)
+        cat = self.bot.modmail_guild.get_channel(int(category))
+        overwrites = {
+            self.bot.modmail_guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            self.bot.modmail_guild.me: discord.PermissionOverwrite(read_messages=True),
+        }
+
+        for level in PermissionLevel:
+            if level <= PermissionLevel.REGULAR:
+                continue
+            permissions = self.bot.config["level_permissions"].get(level.name, [])
+            for perm in permissions:
+                perm = int(perm)
+                if perm == -1:
+                    key = self.bot.modmail_guild.default_role
+                else:
+                    key = self.bot.modmail_guild.get_member(perm)
+                    if key is None:
+                        key = self.bot.modmail_guild.get_role(perm)
+                if key is not None:
+                    logger.info("Granting %s access to Modmail category.", key.name)
+                    overwrites[key] = discord.PermissionOverwrite(read_messages=True)
         await self.maybe_send_embed(
             ctx, "Successfully set ban appeal threads category!", self.bot.main_color
         )
