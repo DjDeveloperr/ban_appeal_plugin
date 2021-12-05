@@ -179,7 +179,11 @@ async function performChecks(
       ctx.response.body = {
         error: {
           title: "Cannot re-appeal.",
-          description: `Your last appeal was ${appeal.status}.`,
+          description: `Your last appeal was ${appeal.status}.${
+            appeal.status === "accepted" 
+              ? "\nYou have since been banned again, and are ineligible to re-appeal." 
+              : ""
+          }`,
         },
         user,
       };
