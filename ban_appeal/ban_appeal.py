@@ -72,6 +72,14 @@ class BanAppeal(commands.Cog):
         embed.url = link
         await channel.send(embed=embed)
 
+    async def maybe_send_embed(ctx: commands.Context, message: str, color: discord.Color) -> discord.Message:
+        """
+        Simple helper to send a simple message to context
+        """
+        return await ctx.send(
+            embed=discord.Embed(description=message, color=color)
+        )
+        
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         appeal = await self.ban_appeals.find_one({"channel": str(message.channel.id)})
@@ -82,7 +90,11 @@ class BanAppeal(commands.Cog):
                 )
                 for q in appeal["questions"]:
                     message.content += f"\n\n**Q:** {q['question']}\n> **A:** {q['answer']}"
-            await self.append_log(message)
+                return await self.append_log(message)
+            elif message.author.bot:
+                return
+            else:
+                await self.append_log(message)
 
     @commands.group(name="banappeal")
     @checks.has_permissions(PermissionLevel.OWNER)
@@ -95,6 +107,7 @@ class BanAppeal(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @config_main.command(name="category")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_category(self, ctx: commands.Context, category: Optional[str]):
         """
         Get the current ban appeal threads category channel ID or set a new one.
@@ -106,9 +119,10 @@ class BanAppeal(commands.Cog):
             return
 
         await self.config.update_one({}, {"$set": {"category": category}}, upsert=True)
-        await ctx.send("Successfully set ban appeal threads category!")
+        await self.maybe_send_embed(ctx, "Successfully set ban appeal threads category!", self.bot.main_color)
 
     @config_main.group(name="questions")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_questions_main(self, ctx: commands.Context):
         """
         Configure the ban appeal questions.
@@ -118,6 +132,7 @@ class BanAppeal(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @config_questions_main.command(name="list")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_questions_list(self, ctx: commands.Context):
         """
         List all the current ban appeal questions.
@@ -125,15 +140,20 @@ class BanAppeal(commands.Cog):
 
         config = await self.get_config()
         if len(config["questions"]) == 0:
-            await ctx.send("No questions have been set!")
+            await self.maybe_send_embed(
+                ctx, 
+                "No questions have been set. Default questions will be used:\n1. Who banned you?\n2. Why do you think you were banned?\n3. Are you sorry?", 
+                self.bot.main_color
+            )
             return
         questions = []
         for index, question in enumerate(config["questions"]):
             questions.append(f"{index + 1}. {question}")
         questions = "\n".join(questions)
-        await ctx.send(f"Current questions:\n{questions}")
+        await self.maybe_send_embed(ctx, f"Current questions:\n{questions}", self.bot.main_color)
 
     @config_questions_main.command(name="setlist")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_questions_setlist(self, ctx: commands.Context, *questions):
         """
         Set a new list of ban appeal questions. Removes all previous ones.
@@ -141,9 +161,10 @@ class BanAppeal(commands.Cog):
 
         questions = list(questions)
         await self.config.update_one({}, {"$set": {"questions": questions}}, upsert=True)
-        await ctx.send("Successfully set questions list!")
+        await self.maybe_send_embed(ctx, "Successfully set questions list!", self.bot.main_color)
 
     @config_questions_main.command(name="add")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_questions_add(self, ctx: commands.Context, *, question: str):
         """
         Add a new ban appeal question to the existing list.
@@ -152,9 +173,10 @@ class BanAppeal(commands.Cog):
         config = await self.get_config()
         config["questions"].append(question)
         await self.config.update_one({}, {"$set": {"questions": config["questions"]}}, upsert=True)
-        await ctx.send("Successfully added question!")
+        await self.maybe_send_embed(ctx, "Successfully added question!", self.bot.main_color)
 
     @config_questions_main.command(name="remove")
+    @checks.has_permissions(PermissionLevel.OWNER)
     async def config_questions_remove(self, ctx: commands.Context, question_index: int):
         """
         Remove a ban appeal question (at given index starting from 1) from the existing list.
@@ -162,11 +184,11 @@ class BanAppeal(commands.Cog):
 
         config = await self.get_config()
         if question_index < 1 or question_index > len(config["questions"]):
-            await ctx.send("Invalid question index!")
+            await self.maybe_send_embed(ctx, "Invalid question index!", self.bot.error_color)
             return
         config["questions"].pop(question_index - 1)
         await self.config.update_one({}, {"$set": {"questions": config["questions"]}}, upsert=True)
-        await ctx.send("Successfully removed question!")
+        await self.maybe_send_embed(ctx, "Successfully removed question!", self.bot.main_color)
 
     @commands.command()
     @checks.has_permissions(PermissionLevel.MODERATOR)
@@ -177,10 +199,10 @@ class BanAppeal(commands.Cog):
 
         appeal = await self.ban_appeals.find_one({"channel": str(ctx.channel.id)})
         if appeal is None:
-            await ctx.send("No ban appeal linked to this channel.")
+            await self.maybe_send_embed(ctx, "No ban appeal linked to this channel.", self.bot.error_color)
             return
         if appeal["status"] != "pending":
-            await ctx.send("This appeal is already handled.")
+            await self.maybe_send_embed(ctx, "This appeal is already handled.", self.bot.error_color)
             return
 
         await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "accepted"}})
@@ -188,7 +210,7 @@ class BanAppeal(commands.Cog):
         try:
             await ctx.guild.unban(discord.Object(int(appeal["userID"])))
         except discord.NotFound:
-            await ctx.send("User is not banned.")
+            await self.maybe_send_embed(ctx, "User is not banned.", self.bot.error_color)
             return
         await self.close(ctx.author, ctx.channel, message="Accepted.")
 
@@ -201,10 +223,10 @@ class BanAppeal(commands.Cog):
 
         appeal = await self.ban_appeals.find_one({"channel": str(ctx.channel.id)})
         if appeal is None:
-            await ctx.send("No ban appeal linked to this channel.")
+            await self.maybe_send_embed(ctx, "No ban appeal linked to this channel.", self.bot.error_color)
             return
         if appeal["status"] != "pending":
-            await ctx.send("This appeal is already handled.")
+            await self.maybe_send_embed(ctx, "This appeal is already handled.", self.bot.error_color)
             return
 
         await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "rejected"}})
