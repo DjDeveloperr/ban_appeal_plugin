@@ -115,7 +115,9 @@ class BanAppeal(commands.Cog):
 
         if category is None:
             config = await self.get_config()
-            await ctx.send(f"Current category: {config['category']}")
+            await self.maybe_send_embed(
+                ctx, f"Current category: {config['category']}"
+            )
             return
 
         await self.config.update_one({}, {"$set": {"category": category}}, upsert=True)
