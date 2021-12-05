@@ -52,8 +52,8 @@ class BanAppeal(commands.Cog):
         for q in appeal["questions"]:
             embed.add_field(name=q["question"], value=q["answer"], inline=False)
         embed.set_footer(text=f"User ID: {user.id}")
-        # not let ourselves handle overwrites tbh cause like... 
-        # ummmm dpy automatically creates a channel and 
+        # not let ourselves handle overwrites tbh cause like...
+        # ummmm dpy automatically creates a channel and
         # syncs the default permissions from the set category
         # so *lets* not do that
         #         overwrites = {
@@ -72,14 +72,14 @@ class BanAppeal(commands.Cog):
         embed.url = link
         await channel.send(embed=embed)
 
-    async def maybe_send_embed(ctx: commands.Context, message: str, color: discord.Color) -> discord.Message:
+    async def maybe_send_embed(
+        ctx: commands.Context, message: str, color: discord.Color
+    ) -> discord.Message:
         """
         Simple helper to send a simple message to context
         """
-        return await ctx.send(
-            embed=discord.Embed(description=message, color=color)
-        )
-        
+        return await ctx.send(embed=discord.Embed(description=message, color=color))
+
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> None:
         appeal = await self.ban_appeals.find_one({"channel": str(message.channel.id)})
@@ -119,7 +119,9 @@ class BanAppeal(commands.Cog):
             return
 
         await self.config.update_one({}, {"$set": {"category": category}}, upsert=True)
-        await self.maybe_send_embed(ctx, "Successfully set ban appeal threads category!", self.bot.main_color)
+        await self.maybe_send_embed(
+            ctx, "Successfully set ban appeal threads category!", self.bot.main_color
+        )
 
     @config_main.group(name="questions")
     @checks.has_permissions(PermissionLevel.OWNER)
@@ -141,9 +143,9 @@ class BanAppeal(commands.Cog):
         config = await self.get_config()
         if len(config["questions"]) == 0:
             await self.maybe_send_embed(
-                ctx, 
-                "No questions have been set. Default questions will be used:\n1. Who banned you?\n2. Why do you think you were banned?\n3. Are you sorry?", 
-                self.bot.main_color
+                ctx,
+                "No questions have been set. Default questions will be used:\n1. Who banned you?\n2. Why do you think you were banned?\n3. Are you sorry?",
+                self.bot.main_color,
             )
             return
         questions = []
@@ -199,10 +201,14 @@ class BanAppeal(commands.Cog):
 
         appeal = await self.ban_appeals.find_one({"channel": str(ctx.channel.id)})
         if appeal is None:
-            await self.maybe_send_embed(ctx, "No ban appeal linked to this channel.", self.bot.error_color)
+            await self.maybe_send_embed(
+                ctx, "No ban appeal linked to this channel.", self.bot.error_color
+            )
             return
         if appeal["status"] != "pending":
-            await self.maybe_send_embed(ctx, "This appeal is already handled.", self.bot.error_color)
+            await self.maybe_send_embed(
+                ctx, "This appeal is already handled.", self.bot.error_color
+            )
             return
 
         await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "accepted"}})
@@ -223,10 +229,14 @@ class BanAppeal(commands.Cog):
 
         appeal = await self.ban_appeals.find_one({"channel": str(ctx.channel.id)})
         if appeal is None:
-            await self.maybe_send_embed(ctx, "No ban appeal linked to this channel.", self.bot.error_color)
+            await self.maybe_send_embed(
+                ctx, "No ban appeal linked to this channel.", self.bot.error_color
+            )
             return
         if appeal["status"] != "pending":
-            await self.maybe_send_embed(ctx, "This appeal is already handled.", self.bot.error_color)
+            await self.maybe_send_embed(
+                ctx, "This appeal is already handled.", self.bot.error_color
+            )
             return
 
         await self.ban_appeals.update_one({"_id": appeal["_id"]}, {"$set": {"status": "rejected"}})
