@@ -138,7 +138,7 @@ async function performChecks(
   if (!token) {
     ctx.response.status = 401;
     ctx.response.body = {
-      error: { title: "Huh", description: "you're not supposed to be here." },
+      error: { title: "Huh", description: "You're not supposed to be here." },
     };
     return;
   }
@@ -164,7 +164,7 @@ async function performChecks(
   );
   if (!ban) {
     ctx.response.body = {
-      error: { title: "Nope.", description: "you're not banned." },
+      error: { title: "Nope.", description: "You're not banned." },
       user,
     };
     return;
