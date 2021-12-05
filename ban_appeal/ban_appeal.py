@@ -140,6 +140,7 @@ class BanAppeal(commands.Cog):
                 if key is not None:
                     logger.info("Granting %s access to Modmail category.", key.name)
                     overwrites[key] = discord.PermissionOverwrite(read_messages=True)
+        await cat.edit(overwrites=overwrites)
         await self.maybe_send_embed(
             ctx, "Successfully set ban appeal threads category!", self.bot.main_color
         )
