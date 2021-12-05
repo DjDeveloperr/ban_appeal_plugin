@@ -52,7 +52,7 @@ There's a few commands in the plugin. `[p]` is your prefix.
 
 You need to obtain few env variables for this.
 
-* `MONGO` - It's your mongodb URI which you use for your [modmail](https://github.com/kyb3r/modmail) instance and add `&authMechanism=SCRAM-SHA-1` to it if there's no query parameter already in the URI. It looks something like `mongodb+srv://Username:YourPassword@modmail-kjvn21.mongodb.net&authMechanism=SCRAM-SHA-1` as I didn't have a query parameter already, I added `&authMechanism=SCRAM-SHA-1`.
+* `MONGO` - It's your mongodb URI which you use for your [modmail](https://github.com/kyb3r/modmail) instance and add `/?authMechanism=SCRAM-SHA-1` to it if there's no query parameter already in the URI. It looks something like `mongodb+srv://Username:YourPassword@modmail-kjvn21.mongodb.net/?authMechanism=SCRAM-SHA-1` as I did have a query parameter already, I added `&authMechanism=SCRAM-SHA-1`.
 * `PORT` - The port on which the server will run on.
 * `GUILD_ID` - The modmail guild ID used in your [modmail](https://github.com/kyb3r/modmail) instance.
 * `CLIENT_ID` - The client ID of your modmail bot, it can be obtained [here](https://discord.com/developers/applications) in the `OAuth2` section.
