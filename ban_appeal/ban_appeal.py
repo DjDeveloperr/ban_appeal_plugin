@@ -116,7 +116,7 @@ class BanAppeal(commands.Cog):
         if category is None:
             config = await self.get_config()
             await self.maybe_send_embed(
-                ctx, f"Current category: {config['category']}"
+                ctx, f"Current category: {config['category']}", self.bot.main_color
             )
             return
 
