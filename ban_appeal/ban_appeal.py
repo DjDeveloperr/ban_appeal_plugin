@@ -188,7 +188,7 @@ class BanAppeal(commands.Cog):
         try:
             await ctx.guild.unban(discord.Object(int(appeal["userID"])))
         except discord.NotFound:
-            await ctx.send("User is not banned, what the fuck?")
+            await ctx.send("User is not banned.")
             return
         await self.close(ctx.author, ctx.channel, message="Accepted.")
 
