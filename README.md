@@ -14,7 +14,8 @@ To host with docker:
 * Git clone this repo with `git clone https://github.com/DjDeveloperr/ban_appeal_plugin`.
 * Go into the directory where you cloned it and open a terminal session inside the `ban_appeal_plugin` directory.
 * Then, build the docker image by running this command `docker build . -t appeal-server --build-arg PORT=2012`, replace `PORT=2012` with whatever port you want the application to run on, it can **only** be set during build process.
-* After the image has been built, run it in a container with the command `docker run -e PORT=2012 -e MONGO=MONGO-URI -e REDIRECT_URI=URL -e GUILD_ID=GUILD-ID -e CLIENT_ID=CLIENT-ID -e CLIENT_SECRET=CLIENT-SECRET -e TOKEN=BOT-TOKEN -d appeal-server`, the `PORT` has to be the same port you provided in the previous step while building the image.
+* Rename the `.env.example` file to `.env` and fill the `.env` file with all the correct tokens and IDs .
+* After the image has been built, run it in a container with the command `docker run -d -p PORT:PORT --env-file .env --restart unless-stopped appeal-server`, the `PORT` has to be the same port you provided in the previous step while building the image. The command you run looks something like this `docker run -d -p 2012:2012 --env-file .env --restart unless-stopped appeal-server`.
 
 Following the above steps properly will have a fully functioning appeal server running on a docker container.
 
@@ -51,7 +52,7 @@ There's a few commands in the plugin. `[p]` is your prefix.
 
 You need to obtain few env variables for this.
 
-* `MONGO` - It's your mongodb URI which you use for your [modmail](https://github.com/kyb3r/modmail) instance. It looks something like `mongodb+srv://Username:YourPassword@modmail-kjvn21.mongodb.net/`.
+* `MONGO` - It's your mongodb URI which you use for your [modmail](https://github.com/kyb3r/modmail) instance and add `&authMechanism=SCRAM-SHA-1` to it. It looks something like `mongodb+srv://Username:YourPassword@modmail-kjvn21.mongodb.net&authMechanism=SCRAM-SHA-1`. **Don't forget to add `&authMechanism=SCRAM-SHA-1` or it'll fail to connect**.
 * `PORT` - The port on which the server will run on.
 * `GUILD_ID` - The modmail guild ID used in your [modmail](https://github.com/kyb3r/modmail) instance.
 * `CLIENT_ID` - The client ID of your modmail bot, it can be obtained [here](https://discord.com/developers/applications) in the `OAuth2` section.
