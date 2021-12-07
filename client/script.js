@@ -4,7 +4,7 @@ const token = Cookies.get("token");
 let user;
 
 const MIN_CHARS = 10;
-const MAX_CHARS = 1024;
+const MAX_CHARS = 500;
 
 const scenes = {
   connecting: document.getElementById("connecting"),
