@@ -238,7 +238,7 @@ router.post("/api/appeal", async (ctx) => {
         typeof q !== "object" || typeof q.question !== "string" ||
         typeof q.answer !== "string" ||
         q.answer.length < 10 ||
-        q.answer.length > 1024
+        q.answer.length > 500
       )
     ) {
       throw new Error("invalid question/answer");
