@@ -81,7 +81,7 @@ class BanAppeal(commands.Cog):
         return await ctx.send(embed=discord.Embed(description=message, color=color))
 
     @commands.Cog.listener()
-    async def on_message_without_command(self, message: discord.Message) -> None:
+    async def on_message(self, message: discord.Message) -> None:
         appeal = await self.ban_appeals.find_one({"channel": str(message.channel.id)})
         if appeal is not None:
             if message.embeds and message.embeds[0].title == "Ban Appeal":
